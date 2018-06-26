@@ -13,10 +13,10 @@ function reducer(state, action) {
         }
     }
 
-    if(action.type == "SET_TIMER_ID") {
+    if(action.type == "SET_POLLING") {
         return {
             ...state,
-            timerId: action.timerId,
+            polling: action.value,
         }
     }
 

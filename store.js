@@ -5,7 +5,7 @@ const {reducer} = require("./reducer");
 
 const initialState = {
     counter: 0,
-    timerId: null,
+    polling: false,
 };
 
 const store = createStore(reducer, initialState, applyMiddleware(errorHandler, thunk));

@@ -1,34 +1,50 @@
 const {activities, register: registerActivities} = require("./activities");
+const {delay} = require("./timer.helpers");
+
+let timerId = null;
 
 function start() {
     console.log("start");
 
-    return dispatch => {
-        function more() {
-            process();
+    return async (dispatch, getState) => {
+        async function more() {
+            await delay(500);
 
-            const timerId = setTimeout(more, 1000);
-            dispatch({type: "SET_TIMER_ID", timerId});
+            const {polling} = getState();
+            if(!polling) {
+                return;
+            }
+
+            await activities.inc();
+
+            timerId = setTimeout(more, 500);
         }
-    }
-}
 
-function process() {
-    activities.inc();
+        if(timerId) {
+            return;
+        }
+
+        await dispatch({type: "SET_POLLING", value: true});
+
+        more();
+    }
 }
 
 function stop() {
     console.log("stop");
 
     return async (dispatch, getState) => {
-        const {timerId} = getState();
-        if(timerId) {
-            clearInterval(timerId);
-
-            dispatch({type: "SET_TIMER_ID", timerId: null});
+        if(!timerId) {
+            return;
         }
+
+        clearTimeout(timerId);
+        timerId = null;
+
+        dispatch({type: "SET_POLLING", value: false});
     }
 }
+
 
 registerActivities({
     start,

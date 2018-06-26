@@ -8,11 +8,18 @@ main();
 async function main() {
     activities.start();
 
-    store.subscribe(function() {
-        console.log("CHANGED: " + store.getState().counter);
-    });
+    (function() {
+        let {counter: lastCounter} = store.getState();
+        store.subscribe(function () {
+            const {counter} = store.getState();
+            if(counter != lastCounter) {
+                console.log("CHANGED: " + counter);
+                lastCounter = counter;
+            }
+        });
+    })();
 
     setTimeout(function() {
         activities.stop();
-    }, 5000);
+    }, 5500);
 }
